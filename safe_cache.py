@@ -2,12 +2,11 @@ import time
 from typing import Any, Callable, Union
 from diskcache import Cache, Lock, Timeout
 from src.settings import CACHE_DIR
-from src.reusables.abstractions import AbstractCache
 
 DefaultParam = object()
 
 
-class SafeDiskCache(AbstractCache):
+class SafeDiskCache:
     @staticmethod
     def __init__cache():
         """Initialize a new Cache instance in the root directory with no eviction."""
