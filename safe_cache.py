@@ -1,8 +1,7 @@
-import os
 import time
+from os import PathLike
 from typing import Any, Callable, Union
 from diskcache import Cache, Lock, Timeout
-from settings import CACHE_DIR
 
 DefaultParam = object()
 
@@ -10,9 +9,7 @@ DefaultParam = object()
 class SafeDiskCache:
     @staticmethod
     def __init__cache(cache_dir):
-        """
-        Initializes a new Cache instance in the root directory with no eviction.
-        """
+        """Initialize a new Cache instance in the root directory with no eviction."""
         return Cache(directory=cache_dir, eviction_policy='none')
 
     def __retry__(self, retries: int = 3, backoff: float = 0.1, default: Any = False) -> Callable[
@@ -44,8 +41,10 @@ class SafeDiskCache:
 
         return decorator
 
-    def __init__(self, retries: int, default: Any = None, cache_dir=None):
+    def __init__(self, retries: int, cache_dir: PathLike, default: Any = None, ):
         """
+        Initialize SafeDiskCache instance.
+
         :param int retries: Number of attempts before giving up (minimum 2)
         :param default: Default value returned if key not found (default None)
         """
@@ -54,7 +53,7 @@ class SafeDiskCache:
 
         self.retries = retries - 1  # diskcache already does one retry
         self.default = default
-        self.cache_dir = cache_dir if (cache_dir and os.path.exists(cache_dir)) else CACHE_DIR
+        self.cache_dir = cache_dir
         self.cache = self.__init__cache(cache_dir=self.cache_dir)
         self.lock = Lock(self.cache, 'global_lock')
 
